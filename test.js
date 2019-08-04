@@ -1,7 +1,9 @@
-const functions = require('./fn')
+const userFunctions = require('./functions/user.function')
+const taskFunctions = require('./functions/task.function')
+const meetingFunctions = require('./functions/meeting.function')
 
-test('get all users ', async done => {
-  const response = await functions.getUsers()
+test('Get all users', async done => {
+  const response = await userFunctions.getUsers()
   expect(response.data.body.user.length).toBe(24)
   done()
 })
