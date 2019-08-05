@@ -1,23 +1,26 @@
 const axios = require('axios')
 
 const meetingFunctions = {
-  createMeeting: async () => {
-    const Meetings = await axios.post(
-      'http://localhost:5000/api/meetings/createMeeting/v1'
-    )
-    return Meetings
+  getMeeting: async () => {
+    return await axios.post('http://localhost:5000/api/meetings/get/v1')
   },
-  editMeeting: async () => {
-    const Meetings = await axios.post(
-      'http://localhost:5000/api/meetings/editMeeting/v1'
+  createMeeting: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/meetings/createMeeting/v1',
+      data
     )
-    return Meetings
   },
-  confirmAttending: async () => {
-    const Meetings = await axios.post(
-      'http://localhost:5000/api/meetings/confirmAttending/v1'
+  editMeeting: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/meetings/editMeeting/v1',
+      data
     )
-    return Meetings
+  },
+  confirmAttending: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/meetings/confirmAttending/v1',
+      data
+    )
   }
 }
 module.exports = meetingFunctions

@@ -231,7 +231,7 @@ test('Suspended User should not be able to apply on a task', async done => {
   done()
 })
 
-test('Users should be able to create/apply/accept/submit/confirm a task after the sign up ', async done => {
+test('Users should be able to create/apply/accept/submit/confirm a task and create/confirm a meeting after the sign up ', async done => {
   const createUser = await userFunctions.createUser({
     header: {
       channel: 'web',
@@ -328,7 +328,7 @@ test('Users should be able to create/apply/accept/submit/confirm a task after th
   })
   expect(applyTask.data.header.statusCode).toEqual('0000')
 
-  const taskOwnerSignIn = await userFunctions.signin({
+  let taskOwnerSignIn = await userFunctions.signin({
     header: {
       channel: 'web',
       timestamp: '2019-07-30 01:53:30',
@@ -370,6 +370,30 @@ test('Users should be able to create/apply/accept/submit/confirm a task after th
     appliedUser.data.body.user[0].id
   )
 
+  const createMeeting = await meetingFunctions.createMeeting({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      meetingTitle: 'Meeting testing',
+      location: 'Maadi',
+      date: '2019-08-30',
+      organizer: createUser.data.body.user[0].id,
+      userTasks: [
+        {
+          taskId: createTask.data.body.task[0].id,
+          attendeeId: appliedUser.data.body.user[0].id
+        }
+      ]
+    }
+  })
+
+  expect(createMeeting.data.header.statusCode).toEqual('0000')
+  let meetingResponse = await meetingFunctions.getMeeting()
+  expect(meetingResponse.data.body.meeting.length).toBe(1)
+
   const acceptedApplicantSignin = await userFunctions.signin({
     header: {
       channel: 'web',
@@ -382,6 +406,23 @@ test('Users should be able to create/apply/accept/submit/confirm a task after th
     }
   })
   expect(acceptedApplicantSignin.data.header.statusCode).toEqual('0000')
+
+  const confirmAttending = await meetingFunctions.confirmAttending({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      meetingId: createMeeting.data.body.meeting[0].meeting_id,
+      attendeeId: appliedUser.data.body.user[0].id,
+      confirmed: true
+    }
+  })
+
+  expect(confirmAttending.data.header.statusCode).toEqual('0000')
+  meetingResponse = await meetingFunctions.getMeeting()
+  expect(meetingResponse.data.body.meeting[0].confirmed).toBe(true)
 
   const submitTask = await taskFunctions.submitTask({
     header: {
@@ -447,6 +488,128 @@ test('Users should be able to create/apply/accept/submit/confirm a task after th
     }
   })
   expect(taskResponse.data.body.task[1].confirmed).toBe(true)
+
+  done()
+})
+
+test('User should be able to create and edit a task/Meeting', async done => {
+  const createUser = await userFunctions.createUser({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      username: 'boo1234567',
+      email: 'boo1234567@boo.boo',
+      password: 'password'
+    }
+  })
+  const userResponse = await userFunctions.getUsers()
+  expect(userResponse.data.body.user.length).toBe(7)
+
+  const signinUser = await userFunctions.signin({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      email: 'boo1234567@boo.boo',
+      password: 'password'
+    }
+  })
+  expect(signinUser.data.header.statusCode).toEqual('0000')
+
+  const createTask = await taskFunctions.createTask({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      taskName: 'Task Testing',
+      taskOwner: createUser.data.body.user[0].id,
+      deadline: '2019-11-28 01:53:30'
+    }
+  })
+
+  let taskResponse = await taskFunctions.viewTaskList({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      page: 0,
+      limit: 5
+    }
+  })
+  expect(taskResponse.data.body.task.length).toBe(3)
+
+  await taskFunctions.editTask({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      taskId: createTask.data.body.task[0].id,
+      dataToEdit: [['taskName', 'Core System']]
+    }
+  })
+  taskResponse = await taskFunctions.viewTaskList({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      page: 0,
+      limit: 5
+    }
+  })
+  expect(taskResponse.data.body.task[2].task_name).toBe('Core System')
+
+  const createMeeting = await meetingFunctions.createMeeting({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      meetingTitle: 'Meeting testing',
+      location: 'Maadi',
+      date: '2019-08-30',
+      organizer: createUser.data.body.user[0].id,
+      userTasks: [
+        {
+          taskId: createTask.data.body.task[0].id,
+          attendeeId: createUser.data.body.user[0].id
+        }
+      ]
+    }
+  })
+
+  expect(createMeeting.data.header.statusCode).toEqual('0000')
+  let meetingResponse = await meetingFunctions.getMeeting()
+  expect(meetingResponse.data.body.meeting.length).toBe(2)
+
+  await meetingFunctions.editMeeting({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      meetingId: createMeeting.data.body.meeting[0].meeting_id,
+      dataToEdit: [['meeting_title', 'Core System Testing']]
+    }
+  })
+  meetingResponse = await meetingFunctions.getMeeting()
+  expect(meetingResponse.data.body.meeting[1].meeting_title).toBe(
+    'Core System Testing'
+  )
 
   done()
 })
