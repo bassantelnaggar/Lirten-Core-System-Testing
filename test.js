@@ -7,3 +7,20 @@ test('Get all users', async done => {
   expect(response.data.body.user.length).toBe(24)
   done()
 })
+
+test('User should be able to signin after the signup', async done => {
+  const createNewUser = await userFunctions.createUser({
+    header: {
+      channel: 'web',
+      timestamp: '2019-07-30 01:53:30',
+      requestId: 'A-123'
+    },
+    body: {
+      username: 'Boo123',
+      email: 'boo@boo.boo',
+      password: 'password'
+    }
+  })
+  expect(createNewUser.data.header.statusCode).toEqual('0000')
+  done()
+})
