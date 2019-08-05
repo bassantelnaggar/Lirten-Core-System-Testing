@@ -11,23 +11,22 @@ const userFunctions = {
     )
   },
   signin: async userInfo => {
-    const Users = await axios.post(
+    return await axios.post(
       'http://localhost:5000/api/users/signin/v1',
       userInfo
     )
-    Users
   },
-  suspendUser: async () => {
-    const Users = await axios.post(
-      'http://localhost:5000/api/users/suspendUser/v1'
+  suspendUser: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/users/suspendUser/v1',
+      data
     )
-    return Users
   },
-  unsuspendUser: async () => {
-    const Users = await axios.post(
-      'http://localhost:5000/api/users/suspendUser/v1'
+  unsuspendUser: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/users/suspendUser/v1',
+      data
     )
-    return Users
   }
 }
 module.exports = userFunctions

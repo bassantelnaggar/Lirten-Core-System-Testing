@@ -1,17 +1,17 @@
 const axios = require('axios')
 
 const taskFunctions = {
-  createTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/createTask/v1'
+  createTask: async taskData => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/createTask/v1',
+      taskData
     )
-    return Tasks
   },
-  viewTaskList: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/viewTaskList/v1'
+  viewTaskList: async getTasks => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/viewTaskList/v1',
+      getTasks
     )
-    return Tasks
   },
   viewMyTasks: async () => {
     const Tasks = await axios.post(
@@ -31,29 +31,29 @@ const taskFunctions = {
     )
     return Tasks
   },
-  applyTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/applyTask/v1'
+  applyTask: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/applyTask/v1',
+      data
     )
-    return Tasks
   },
-  acceptApplicant: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/acceptApplicant/v1'
+  acceptApplicant: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/acceptApplicant/v1',
+      data
     )
-    return Tasks
   },
-  submitTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/submitTask/v1'
+  submitTask: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/submitTask/v1',
+      data
     )
-    return Tasks
   },
-  confirmTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/confirmTask/v1'
+  confirmTask: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/confirmTask/v1',
+      data
     )
-    return Tasks
   },
   editTask: async () => {
     const Tasks = await axios.post(
