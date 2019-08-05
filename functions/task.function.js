@@ -19,18 +19,6 @@ const taskFunctions = {
     )
     return Tasks
   },
-  freezeTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/freezeTask/v1'
-    )
-    return Tasks
-  },
-  unfreezeTask: async () => {
-    const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/freezeTask/v1'
-    )
-    return Tasks
-  },
   applyTask: async data => {
     return await axios.post(
       'http://localhost:5000/api/tasks/applyTask/v1',
@@ -55,17 +43,18 @@ const taskFunctions = {
       data
     )
   },
-  editTask: async () => {
+  editTask: async data => {
     const Tasks = await axios.post(
-      'http://localhost:5000/api/tasks/editTask/v1'
+      'http://localhost:5000/api/tasks/editTask/v1',
+      data
     )
     return Tasks
   },
-  sortFilteredTasks: async () => {
-    const Users = await axios.post(
-      'http://localhost:5000/api/tasks/sortFilteredTasks/v1'
+  sortFilteredTasks: async data => {
+    return await axios.post(
+      'http://localhost:5000/api/tasks/sortFilteredTasks/v1',
+      data
     )
-    return Tasks
   }
 }
 module.exports = taskFunctions
